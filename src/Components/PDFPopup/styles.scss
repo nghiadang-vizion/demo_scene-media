@@ -118,7 +118,6 @@
 
   .pdf-popup-modal {
     width: 95vw;
-    height: 90vh;
     border-radius: 8px;
   }
 
@@ -134,7 +133,6 @@
 @media (max-width: 480px) {
   .pdf-popup-modal {
     width: 100vw;
-    height: 100vh;
     border-radius: 0;
     max-width: none;
     max-height: none;

@@ -27,10 +27,24 @@ function DemoSceneTypes() {
   const [isGifAudioPopupOpen, setIsGifAudioPopupOpen] = useState(false);
   const [isFlipbookPopupOpen, setIsFlipbookPopupOpen] = useState(false);
   const [IsDone, setIsDone] = useState(false);
+  const [videoElement, setVideoElement] = useState(null);
 
   useEffect(() => {
     setIsDone(false);
   }, [currentScene]);
+
+  useEffect(() => {
+    if (currentScene.id === "scene3" && videoElement) {
+      videoElement.currentTime = 0; // Reset video về đầu
+      videoElement.play().catch(console.error);
+    }
+  }, [currentScene.id, videoElement]);
+
+  const videoCallbackRef = (element) => {
+    if (element) {
+      setVideoElement(element);
+    }
+  };
 
   const orbitSettings = useMemo(() => {
     if (currentScene.sceneType === "panorama") {
@@ -53,10 +67,12 @@ function DemoSceneTypes() {
   }, [currentScene]);
 
   useEffect(() => {
-    if (mcRef.current.paused) {
-      mcRef.current.play();
+    if (currentScene.id === "scene3" && mcRef.current) {
+      if (mcRef.current.paused) {
+        mcRef.current.play().catch(console.error);
+      }
     }
-  }, []);
+  }, [currentScene.id]);
 
   return (
     <>
@@ -119,9 +135,18 @@ function DemoSceneTypes() {
         )}
         <Plane position={[-10.8666798139661, 95.43399402176209, 400]} />
       </Canvas>
-      <video muted playsInline id="video" ref={mcRef} loop>
-        <source src={video} />
-      </video>
+
+      {currentScene.id === "scene3" && (
+        <video
+          muted
+          playsInline
+          id="video"
+          ref={videoCallbackRef}
+          loop
+        >
+          <source src={video} />
+        </video>
+      )}
 
       {currentScene.id !== "scene3" && (
         <BackButton

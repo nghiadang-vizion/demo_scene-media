@@ -1,12 +1,12 @@
 .video-overlay {
   position: fixed;
-  top: 0;
+  top: 50%;
   left: 0;
   width: 100vw;
-  height: 100vh;
   background-color: #000;
   z-index: 9999;
   opacity: 1;
+  transform: translateY(-50%);
 
   &.fade-out {
     opacity: 0;

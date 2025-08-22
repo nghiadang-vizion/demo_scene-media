@@ -8,8 +8,8 @@ function App() {
 
   return (
     <>
-      <IntroVideo setIsDone={setIsDone} IsDone={IsDone} />
-      <DemoSceneTypes />
+      {/* <IntroVideo setIsDone={setIsDone} IsDone={IsDone} /> */}
+      {!IsDone && <DemoSceneTypes />}
     </>
   );
 }
