@@ -1,0 +1,176 @@
+.pdf-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  padding: 20px;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.pdf-popup-modal {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  width: 90vw;
+  height: 85vh;
+  max-width: 1200px;
+  max-height: 800px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: slideIn 0.3s ease-out;
+}
+
+.pdf-popup-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f9fafb;
+  flex-shrink: 0;
+}
+
+.pdf-popup-title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.pdf-popup-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  color: #6b7280;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    background-color: #f3f4f6;
+    color: #374151;
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+.pdf-popup-content {
+  flex: 1;
+  padding: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+.pdf-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+}
+
+.pdf-no-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #6b7280;
+  font-size: 1.1rem;
+}
+
+// Animations
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .pdf-popup-overlay {
+    padding: 10px;
+  }
+
+  .pdf-popup-modal {
+    width: 95vw;
+    height: 90vh;
+    border-radius: 8px;
+  }
+
+  .pdf-popup-header {
+    padding: 16px 20px;
+  }
+
+  .pdf-popup-title {
+    font-size: 1.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .pdf-popup-modal {
+    width: 100vw;
+    height: 100vh;
+    border-radius: 0;
+    max-width: none;
+    max-height: none;
+  }
+
+  .pdf-popup-overlay {
+    padding: 0;
+  }
+}
+
+// Dark mode support (optional)
+@media (prefers-color-scheme: dark) {
+  .pdf-popup-modal {
+    background: #1f2937;
+    color: white;
+  }
+
+  .pdf-popup-header {
+    background: #111827;
+    border-bottom-color: #374151;
+  }
+
+  .pdf-popup-title {
+    color: #f9fafb;
+  }
+
+  .pdf-popup-close {
+    color: #9ca3af;
+
+    &:hover {
+      background-color: #374151;
+      color: #f3f4f6;
+    }
+  }
+
+  .pdf-no-content {
+    color: #9ca3af;
+  }
+}

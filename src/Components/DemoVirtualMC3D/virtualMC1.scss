@@ -1,0 +1,16 @@
+.video_wrapper1 {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 100px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  video {
+    width: 170px;
+    height: 170px;
+    // border-radius: 50%;
+  }
+}
