@@ -137,13 +137,7 @@ function DemoSceneTypes() {
       </Canvas>
 
       {currentScene.id === "scene3" && (
-        <video
-          muted
-          playsInline
-          id="video"
-          ref={videoCallbackRef}
-          loop
-        >
+        <video muted playsInline id="video" ref={videoCallbackRef} loop>
           <source src={video} />
         </video>
       )}
