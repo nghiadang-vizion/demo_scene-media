@@ -5,8 +5,6 @@ import "./styles.scss";
 const FlipbookPopup = ({
   isOpen,
   onClose,
-  pdfUrl,
-  pdfImages, // Prop mới để nhận array các ảnh PDF
   title = "Flipbook Viewer",
   width = 400,
   height = 600,
@@ -15,115 +13,91 @@ const FlipbookPopup = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(0);
-  const [pdfLibLoaded, setPdfLibLoaded] = useState(false);
   const flipBookRef = useRef(null);
 
-  // Load PDF.js library
+  /*
+   * CODE CŨ: Tải thư viện PDF.js để chuyển đổi PDF thành ảnh
+   * Đã tạm thời vô hiệu hóa theo yêu cầu mới (hiển thị 4 trang custom)
+   */
+  // useEffect(() => {
+  //   const loadPDFJS = () => {
+  //     if (window.pdfjsLib) {
+  //       setPdfLibLoaded(true);
+  //       return;
+  //     }
+  //     const script = document.createElement("script");
+  //     script.src =
+  //       "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js";
+  //     script.onload = () => {
+  //       if (window.pdfjsLib) {
+  //         window.pdfjsLib.GlobalWorkerOptions.workerSrc =
+  //           "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+  //         setPdfLibLoaded(true);
+  //       }
+  //     };
+  //     script.onerror = () => {
+  //       console.error("Failed to load PDF.js");
+  //       setError("Không thể tải thư viện PDF");
+  //     };
+  //     document.head.appendChild(script);
+  //     return () => {
+  //       if (document.head.contains(script)) {
+  //         document.head.removeChild(script);
+  //       }
+  //     };
+  //   };
+  //   loadPDFJS();
+  // }, []);
+
+  // CẤU HÌNH MỚI: Tạo 4 trang (text, youtube, video local, ảnh)
   useEffect(() => {
-    const loadPDFJS = () => {
-      if (window.pdfjsLib) {
-        setPdfLibLoaded(true);
-        return;
-      }
+    if (!isOpen) return;
+    const customPages = [
+      { id: 1, type: "text" },
+      { id: 2, type: "youtube", youtubeId: "dQw4w9WgXcQ" },
+      { id: 3, type: "video", src: "/mc2.mp4" },
+      { id: 4, type: "image", src: "/img1.jpg" },
+    ];
+    setPages(customPages);
+    setLoading(false);
+    setError(null);
+  }, [isOpen]);
 
-      // Load PDF.js script
-      const script = document.createElement("script");
-      script.src =
-        "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js";
-      script.onload = () => {
-        if (window.pdfjsLib) {
-          window.pdfjsLib.GlobalWorkerOptions.workerSrc =
-            "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
-          setPdfLibLoaded(true);
-        }
-      };
-      script.onerror = () => {
-        console.error("Failed to load PDF.js");
-        setError("Không thể tải thư viện PDF");
-      };
-      document.head.appendChild(script);
-
-      return () => {
-        if (document.head.contains(script)) {
-          document.head.removeChild(script);
-        }
-      };
-    };
-
-    loadPDFJS();
-  }, []);
-
-  // Sử dụng ảnh PDF được cung cấp từ bên ngoài
-  useEffect(() => {
-    if (pdfImages && pdfImages.length > 0) {
-      const imagePages = pdfImages.map((imageUrl, index) => ({
-        id: index + 1,
-        image: imageUrl,
-        type: "image",
-      }));
-      setPages(imagePages);
-      setLoading(false);
-      setError(null);
-      return;
-    }
-
-    if (isOpen && pdfUrl && pdfLibLoaded) {
-      loadPDFAsImages(pdfUrl);
-    }
-  }, [isOpen, pdfUrl, pdfImages, pdfLibLoaded]);
-
-  // Chuyển đổi PDF thành ảnh sử dụng PDF.js
-  const loadPDFAsImages = async (url) => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      if (!window.pdfjsLib) {
-        throw new Error("PDF.js library not loaded");
-      }
-
-      const loadingTask = window.pdfjsLib.getDocument(url);
-      const pdf = await loadingTask.promise;
-
-      const imagePages = [];
-
-      for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-        const page = await pdf.getPage(pageNum);
-        const scale = 2; // Tăng chất lượng ảnh
-        const viewport = page.getViewport({ scale });
-
-        // Tạo canvas
-        const canvas = document.createElement("canvas");
-        const context = canvas.getContext("2d");
-        canvas.height = viewport.height;
-        canvas.width = viewport.width;
-
-        // Render PDF page lên canvas
-        const renderContext = {
-          canvasContext: context,
-          viewport: viewport,
-        };
-
-        await page.render(renderContext).promise;
-
-        // Chuyển canvas thành base64 image
-        const imageData = canvas.toDataURL("image/jpeg", 0.9);
-
-        imagePages.push({
-          id: pageNum,
-          image: imageData,
-          type: "image",
-        });
-      }
-
-      setPages(imagePages);
-    } catch (err) {
-      console.error("Error loading PDF:", err);
-      setError("Không thể tải PDF. Vui lòng thử lại.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  /*
+   * CODE CŨ: Hàm chuyển PDF thành ảnh bằng PDF.js
+   * Đã comment theo yêu cầu.
+   */
+  // const loadPDFAsImages = async (url) => {
+  //   try {
+  //     setLoading(true);
+  //     setError(null);
+  //     if (!window.pdfjsLib) {
+  //       throw new Error("PDF.js library not loaded");
+  //     }
+  //     const loadingTask = window.pdfjsLib.getDocument(url);
+  //     const pdf = await loadingTask.promise;
+  //     const imagePages = [];
+  //     for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+  //       const page = await pdf.getPage(pageNum);
+  //       const scale = 2;
+  //       const viewport = page.getViewport({ scale });
+  //       const canvas = document.createElement("canvas");
+  //       const context = canvas.getContext("2d");
+  //       canvas.height = viewport.height;
+  //       canvas.width = viewport.width;
+  //       const renderContext = { canvasContext: context, viewport: viewport };
+  //       await page.render(renderContext).promise;
+  //       const imageData = canvas.toDataURL("image/jpeg", 0.9);
+  //       imagePages.push({ id: pageNum, image: imageData, type: "image" });
+  //     }
+  //     setPages(imagePages);
+  //   } catch (err) {
+  //     console.error("Error loading PDF:", err);
+  //     setError("Không thể tải PDF. Vui lòng thử lại.");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -197,7 +171,8 @@ const FlipbookPopup = ({
         </div>
 
         <div className="flipbook-popup-content">
-          {loading && (
+          {/* CODE CŨ: Loading khi xử lý PDF */}
+          {/* {loading && (
             <div className="flipbook-loading">
               <div className="flipbook-spinner"></div>
               <p>
@@ -206,9 +181,10 @@ const FlipbookPopup = ({
                   : "Đang chuyển đổi PDF thành ảnh..."}
               </p>
             </div>
-          )}
+          )} */}
 
-          {error && (
+          {/* CODE CŨ: Hiển thị lỗi khi tải PDF thất bại */}
+          {/* {error && (
             <div className="flipbook-error">
               <p>{error}</p>
               <button
@@ -218,7 +194,7 @@ const FlipbookPopup = ({
                 Thử lại
               </button>
             </div>
-          )}
+          )} */}
 
           {!loading && !error && pages.length > 0 && (
             <div className="flipbook-container">
@@ -248,15 +224,113 @@ const FlipbookPopup = ({
               >
                 {pages.map((page, index) => (
                   <div key={page.id || index} className="flipbook-page">
-                    <img
-                      src={page.image}
-                      alt={`Page ${index + 1}`}
-                      className="page-image"
-                      draggable={false}
-                    />
+                    {page.type === "text" && (
+                      <div
+                        className="page-text"
+                        style={{ padding: 24, color: "black" }}
+                      >
+                        <h2 style={{ marginBottom: 12 }}>Giới thiệu</h2>
+                        <p>
+                          Đây là trang văn bản demo. Bạn có thể đặt bất kỳ nội
+                          dung giới thiệu, mô tả hoặc câu chuyện nào tại đây.
+                        </p>
+                      </div>
+                    )}
+                    {page.type === "youtube" && (
+                      <div
+                        className="page-youtube"
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          padding: 12,
+                        }}
+                      >
+                        <div
+                          style={{
+                            position: "relative",
+                            width: "100%",
+                            height: 0,
+                            paddingBottom: "56.25%",
+                          }}
+                        >
+                          <iframe
+                            src={`https://www.youtube.com/embed/${page.youtubeId}`}
+                            title="YouTube video"
+                            style={{
+                              position: "absolute",
+                              top: 0,
+                              left: 0,
+                              width: "100%",
+                              height: "100%",
+                              border: 0,
+                            }}
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            allowFullScreen
+                          />
+                        </div>
+                      </div>
+                    )}
+                    {page.type === "video" && (
+                      <div
+                        className="page-video"
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          padding: 12,
+                        }}
+                      >
+                        <video
+                          src={page.src}
+                          controls
+                          style={{
+                            width: "100%",
+                            height: "auto",
+                            maxHeight: "100%",
+                          }}
+                        />
+                      </div>
+                    )}
+                    {page.type === "image" && (
+                      <img
+                        src={page.src}
+                        alt={`Page ${index + 1}`}
+                        className="page-image"
+                        draggable={false}
+                      />
+                    )}
                     <div className="page-number">{index + 1}</div>
                   </div>
                 ))}
+
+                {/* <div className="demoPage">
+                  <h2>Trang 1</h2>
+                  <p>Nội dung văn bản.</p>
+                </div>
+
+                <div className="demoPage">
+                  <h2>Video demo</h2>
+                  <video width="100%" controls>
+                    <source
+                      src="https://www.youtube.com/watch?v=0sVfBAO2ZJo"
+                      type="video/mp4"
+                    />
+                    Trình duyệt không hỗ trợ video.
+                  </video>
+                </div>
+
+                <div className="demoPage">
+                  <h2>Trang 3</h2>
+                  <img
+                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTc9APxkj0xClmrU3PpMZglHQkx446nQPG6lA&s"
+                    alt="Demo"
+                  />
+                </div> */}
               </HTMLFlipBook>
             </div>
           )}

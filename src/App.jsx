@@ -4,11 +4,11 @@ import DemoSceneTypes from "./Components/DemoSceneTypes";
 import IntroVideo from "./Components/IntroVideo";
 
 function App() {
-  const [IsDone, setIsDone] = useState(false);
+  const [IsDone, setIsDone] = useState(true);
 
   return (
     <>
-      <IntroVideo setIsDone={setIsDone} IsDone={IsDone} />
+      {/* <IntroVideo setIsDone={setIsDone} IsDone={IsDone} /> */}
       {IsDone && <DemoSceneTypes />}
     </>
   );
